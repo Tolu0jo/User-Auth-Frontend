@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useAuth0 } from "@auth0/auth0-react";
+import { MouseEventHandler } from "react"; // Import MouseEventHandler type from React
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } =
+    useAuth0();
+
+  // Define click handlers with the correct type
+  const handleLoginWithPopup: MouseEventHandler<HTMLButtonElement> = () => {
+    loginWithPopup();
+  };
+
+  const handleLoginWithRedirect: MouseEventHandler<HTMLButtonElement> = () => {
+    loginWithRedirect();
+  };
+
+  const handleLogout: MouseEventHandler<HTMLButtonElement> = () => {
+    logout();
+  };
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Auth0 authentication</h1>
+        <ul>
+          <li>
+            <button onClick={handleLoginWithPopup}>Login With Popup</button>
+          </li>
+          <li>
+            <button onClick={handleLoginWithRedirect}>Login with Redirect</button>
+          </li>
+          <li>
+            <button onClick={handleLogout}>Logout</button>
+          </li>
+        </ul>
+        <h3>
+      User id {isAuthenticated?"Loggged in":"Not Logged out"}
+    </h3>
+    {isAuthenticated &&
+        <pre style ={{textAlign:"start"}}>{JSON.stringify(user,null,2)}</pre>
+    }
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
+
+  
+  
+  
+    
+
+  
+  
+
+
