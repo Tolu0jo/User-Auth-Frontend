@@ -1,14 +1,31 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { MouseEventHandler } from "react"; // Import MouseEventHandler type from React
+import { useQuery,
+  //  useMutation 
+  } from '@apollo/client';
+import {
+  GET_ALL_BOOKS,
+  // GET_BOOK,
+  // CREATE_BOOK,
+  // UPDATE_BOOK,
+  // DELETE_BOOK,
+} from "./graphql/graphql";
 
 function App() {
-  const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } =
+
+  const {loginWithRedirect, logout, user, isAuthenticated } =
     useAuth0();
 
-  // Define click handlers with the correct type
-  const handleLoginWithPopup: MouseEventHandler<HTMLButtonElement> = () => {
-    loginWithPopup();
-  };
+  const { loading, error, data } = useQuery(GET_ALL_BOOKS,{
+    variables:{userId:user?.sub}
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+
+
+
 
   const handleLoginWithRedirect: MouseEventHandler<HTMLButtonElement> = () => {
     loginWithRedirect();
@@ -16,16 +33,13 @@ function App() {
 
   const handleLogout: MouseEventHandler<HTMLButtonElement> = () => {
     logout();
-  };
+  }; 
 
   return (
     <>
-      <div>
+      <div className="app">
         <h1>Auth0 authentication</h1>
         <ul>
-          <li>
-            <button onClick={handleLoginWithPopup}>Login With Popup</button>
-          </li>
           <li>
             <button onClick={handleLoginWithRedirect}>Login with Redirect</button>
           </li>
@@ -34,18 +48,26 @@ function App() {
           </li>
         </ul>
         <h3>
-      User id {isAuthenticated?"Loggged in":"Not Logged out"}
+      User {isAuthenticated?"Loggged in":"Not Logged out"}
     </h3>
-    {isAuthenticated &&
-        <pre style ={{textAlign:"start"}}>{JSON.stringify(user,null,2)}</pre>
-    }
       </div>
+      {isAuthenticated &&
+        <pre style ={{textAlign:"start"}}>{JSON.stringify(user?.sub,null,2)}</pre>
+    }
+
+{data.Books.length>0 &&
+<ul>
+      {data.Books.map((book:any) => (
+        <li key={book.id}>{book.title}</li>
+      ))}
+    </ul>
+    }
     </>
   );
 }
 
 export default App;
-
+  
   
   
   
